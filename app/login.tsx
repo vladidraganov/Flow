@@ -2,23 +2,26 @@ import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import Button from "@/components/button";
 import { supabase } from "@/lib/supabase";
+import { useRouter } from "expo-router";
 import tw from "twrnc";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState(""); // Holds the error message
+  const router = useRouter();
 
   const handleLogin = async () => {
+    setErrorMessage("");
     const { user, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
     if (error) {
-      alert(error.message);
+      setErrorMessage(error.message); // Show error below inputs
     } else {
-      alert("Login successful!");
-      // Navigate to home screen after login
+      router.push("/home"); // Redirect to home page after login
     }
   };
 
@@ -46,6 +49,9 @@ const LoginScreen = () => {
         />
 
         <Button title="Login" onPress={handleLogin} />
+        {errorMessage ? (
+          <Text className="text-red-500 text-center mb-4">{errorMessage}</Text>
+        ) : null}
       </View>
     </View>
   );

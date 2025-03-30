@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
 import Button from "@/components/button";
 import tw from "twrnc";
 import { Stack } from "expo-router";
@@ -16,7 +16,8 @@ const SignUpScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
-
+  
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleSignUp = async () => {
     const { user, error } = await supabase.auth.signUp({
@@ -25,9 +26,10 @@ const SignUpScreen = () => {
     });
   
     if (error) {
-      alert(error.message);
+      setErrorMessage(error.message);
     } else {
-      alert("Check your email to confirm your account!");
+      setErrorMessage("");
+      router.push("/login");
     }
   };
   
@@ -38,7 +40,7 @@ const SignUpScreen = () => {
       <TouchableOpacity
         className="absolute top-5 left-6 p-3 border border-[#5C5E67] rounded-full"
         onPress={() => {
-            router.push("/index");
+            router.push("/login");
         }}
       >
         <Text className="text-white text-lg">←</Text>
@@ -74,9 +76,15 @@ const SignUpScreen = () => {
         value={password}
         onChangeText={setPassword}
       />
+
+      
       
 
       <Button title="Sign Up" customStyle={tw`p-4 rounded-2xl mt-6 w-full max-w-[320px] h-full max-h-[57px] mb-5`} onPress={handleSignUp} />
+      {errorMessage ? (
+      <Text style={tw`text-red-500 text-center mt-2`}>{errorMessage}</Text>
+      ) : null}
+    
       </View >
     </View>
   );
