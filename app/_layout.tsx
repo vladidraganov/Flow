@@ -22,7 +22,7 @@ export default function RootLayout() {
       }}
     />
     <Stack.Screen
-      name="register"
+      name="signup"
       options={{
         headerShown: false,
       }}

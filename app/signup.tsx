@@ -38,7 +38,22 @@ const SignUpScreen = () => {
       />
       
 
-      <Button title="Sign Up" customStyle={tw`p-4 rounded-2xl mt-6 w-full max-w-[320px] h-full max-h-[57px] mb-5`} onPress={() => console.log("Signed Up")} />
+      <Button
+      title="Sign Up"
+      onPress={() => console.log("Button pressed")}
+      customStyle={{
+        marginTop: 20,
+        paddingHorizontal: 20,
+        paddingVertical: 12,
+        borderRadius: 12,
+        width: '90%',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+      gradientColors={['#3D5AFE', '#253698']}
+      gradientStart={{ x: 0.19, y: 0 }}
+      gradientEnd={{ x: 0.52, y: 1 }}
+/>
       </View >
     </View>
   );
