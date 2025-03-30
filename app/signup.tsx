@@ -3,15 +3,21 @@ import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import Button from "@/components/button";
 import tw from "twrnc";
 import { Stack } from "expo-router";
+const { router } = require("expo-router");
 
 
 
 const SignUpScreen = () => {
   
   return (
-    <View className="flex-1 bg-[#0A0E1F] px-6 pt-20 justify-start">
+    <View className="flex-1 bg-[#0b1131] px-6 pt-20 justify-start">
       {/* Back Button */}
-      <TouchableOpacity className="absolute top-5 left-6 p-3 border border-[#5C5E67] rounded-full">
+      <TouchableOpacity
+        className="absolute top-5 left-6 p-3 border border-[#5C5E67] rounded-full"
+        onPress={() => {
+            router.push("signup");
+        }}
+      >
         <Text className="text-white text-lg">←</Text>
       </TouchableOpacity>
 
