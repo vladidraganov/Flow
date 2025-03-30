@@ -1,18 +1,24 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "strict": true,
+    "jsx": "react-native",
+    "esModuleInterop": true,    // Ensure JSX is set for React Native
+    "strict": true,             // Enforce strict type-checking options
     "paths": {
       "@/*": [
-        "./*"
+        "./*"                    // Resolve paths using the "@" prefix
       ]
     }
   },
   "include": [
     "**/*.ts",
     "**/*.tsx",
-    ".expo/types/**/*.ts",
-    "expo-env.d.ts",
-    "nativewind-env.d.ts"
+    ".expo/types/**/*.ts",      // Expo's types
+    "expo-env.d.ts",            // Custom Expo env types if needed
+    "nativewind-env.d.ts",      // Nativewind types (if using)
+    "svg.d.ts"                  // Custom SVG types (if using SVGs)
+  ],
+  "exclude": [
+    "node_modules"               // Exclude node_modules from TypeScript compilation
   ]
 }

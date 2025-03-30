@@ -1,49 +1,34 @@
-import React from "react";
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import { Text, View, Dimensions } from "react-native";
+import Logo from "../assets/images/svg_images/welcome.svg"; // Correct path
 import Button from "@/components/button";
-import tw from "twrnc";
-import { Stack } from "expo-router";
+import tw from "twrnc"; // Import Tailwind for other styles
+import { router } from "expo-router";
+const { height } = Dimensions.get("window");
 
-
-
-const SignUpScreen = () => {
-  
+export default function Index() {
   return (
-    <View className="flex-1 bg-[#0A0E1F] px-6 pt-20 justify-start">
-      {/* Back Button */}
-      <TouchableOpacity className="absolute top-5 left-6 p-3 border border-[#5C5E67] rounded-full">
-        <Text className="text-white text-lg">←</Text>
-      </TouchableOpacity>
+    <View className="flex-1 justify-center items-center bg-[#0A0E1F] m-0 p-0">
+      <View className="absolute w-full" style={{ left: "30%", top: height * 0.15 }}>
+        <Logo width={200} height={200} />
+      </View>
 
-      
-      <Text className="text-white text-3xl font-semibold ml-9 mt-11 mb-8 " >Sign Up</Text>
+      <Text className="text-5xl text-white mt-10">Habit Hero</Text>
 
-      <View className="mt-6 w-full items-center">
-      <TextInput
-        className="bg-transparent text-white p-4 rounded-2xl  w-full max-w-[320px] mb-5 text-base border border-[#5C5E67]"
-        placeholder="Full name"
-        placeholderTextColor="gray"
-      />
-      <TextInput
-        className="bg-transparent text-white p-4 rounded-2xl  w-full max-w-[320px] mb-5 text-base border border-[#5C5E67]"
-        placeholder="E-mail address"
-        placeholderTextColor="gray"
-        keyboardType="email-address"
-      />
-      <TextInput
-        className="bg-transparent text-white p-4 rounded-2xl  w-full max-w-[320px] mb-5 text-base border border-[#5C5E67]"
-        placeholder="Create password"
-        placeholderTextColor="gray"
-        secureTextEntry
-      />
-      
+      <Text className="text-xl text-white mt-15">Level Up in Real Life</Text>
 
-      <Button title="Sign Up" customStyle={tw`p-4 rounded-2xl mt-6 w-full max-w-[320px] h-full max-h-[57px] mb-5`} onPress={() => console.log("Signed Up")} />
-      </View >
+      {/* Apply custom gradient style here */}
+      <Button
+        title="Login"
+        onPress={() => router.push("/login")}
+        customStyle={{
+          paddingHorizontal: 20,
+          paddingVertical: 12,
+          borderRadius: 12,
+          width: '85%', // Button width (optional),
+          alignItems: 'center', // Center the text inside the button
+          justifyContent: 'center', // Center the text inside the button
+        }}
+      />
     </View>
   );
-};
-
-
-
-export default SignUpScreen;
+}
