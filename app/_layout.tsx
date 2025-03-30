@@ -1,39 +1,19 @@
 import { Stack } from "expo-router";
-import './globals.css'
+import { StatusBar } from "expo-status-bar";
+import "./globals.css";
 
 export default function RootLayout() {
-  return <Stack>
-    <Stack.Screen
-      name="index"
-      options={{
-        headerShown: false,
-      }}
-    />
-    <Stack.Screen
-      name="welcome"
-      options={{
-        headerShown: false,
-      }}
-    />
-    <Stack.Screen
-      name="login"
-      options={{
-        headerShown: false,
-      }}
-    />
-    <Stack.Screen
-      name="register"
-      options={{
-        headerShown: false,
-      }}
-    />
-      <Stack.Screen
-    name="signup"
-    options={{
-      headerShown: false,
-    }}
-  />;
-  </Stack>;
+  return (
+    <>
+      <StatusBar style="light" translucent />
 
-
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="index" />
+        <Stack.Screen name="welcome" />
+        <Stack.Screen name="login" />
+        <Stack.Screen name="home" />
+        <Stack.Screen name="signup" />
+      </Stack>
+    </>
+  );
 }
