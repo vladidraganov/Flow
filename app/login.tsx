@@ -26,12 +26,12 @@ const LoginScreen = () => {
   };
 
   return (
-    <View className="flex-1 bg-[#0A0E1F] px-6 pt-20 justify-start">
-      <Text className="text-white text-3xl font-semibold ml-9 mt-11 mb-8">Login</Text>
+    <View className="flex-1 bg-[#0A0E1F] px-6 pt-20 justify-start ">
+      <Text className="text-white text-3xl font-semibold ml-6 mt-16 mb-4">Login</Text>
 
-      <View className="mt-6 w-full items-center">
+      <View className="mt-6 w-full  items-center">
         <TextInput
-          className="bg-transparent text-white p-4 rounded-2xl w-full max-w-[320px] mb-5 text-base border border-[#5C5E67]"
+          className="bg-transparent text-white p-4 rounded-2xl w-full max-w-[300px] h-full max-h-[60px]  mb-5 text-base border border-[#5C5E67]"
           placeholder="E-mail address"
           placeholderTextColor="gray"
           keyboardType="email-address"
@@ -40,7 +40,7 @@ const LoginScreen = () => {
         />
 
         <TextInput
-          className="bg-transparent text-white p-4 rounded-2xl w-full max-w-[320px] mb-5 text-base border border-[#5C5E67]"
+          className="bg-transparent text-white p-4 rounded-2xl w-full max-w-[300px] h-full max-h-[60px] mb-5 text-base border border-[#5C5E67]"
           placeholder="Password"
           placeholderTextColor="gray"
           secureTextEntry
