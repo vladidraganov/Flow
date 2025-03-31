@@ -1,60 +1,69 @@
-import { Text, View, Dimensions } from "react-native";
+import { Text, View, Dimensions, useWindowDimensions } from "react-native";
 import Logo from "../assets/images/svg_images/welcome.svg";
 import Button from "@/components/button";
 import tw from "twrnc";
 import { useRouter } from "expo-router";
 
-const { height } = Dimensions.get("window");
-const router = useRouter();
-
 export default function Index() {
+  const { height, width } = useWindowDimensions();
+  const router = useRouter();
+
   return (
-    <View className="flex-1 justify-center items-center bg-[#0A0E1F] m-0 p-0">
+    <View className="flex-1 justify-center items-center bg-[#0A0E1F]">
       <View
-        className="absolute w-full"
-        style={{ left: "30%", top: height * 0.1 }}
+        className="absolute w-full justify-center"
+        style={{ left: "23%", top: height * 0.17 }}
       >
-        <Logo width={200} height={200} />
+        <Logo width={220} height={220} />
       </View>
-      
+
       {/* Habit Hero Text */}
-      <Text className="text-5xl text-white mt-40">Habit Hero</Text>
-      
+      <Text
+        className="text-white"
+        style={{ fontSize: width * 0.1, marginTop: height * 0.45 }}
+      >
+        Habit Hero
+      </Text>
+
       {/* Level Up Text */}
-      <Text className="text-xl text-white mt-5">Level Up in Real Life</Text>
-      
-      {/* First Button: Standard Button */}
+      <Text
+        className="text-white"
+        style={{ fontSize: width * 0.05, marginTop: height * 0.02 }}
+      >
+        Level Up in Real Life
+      </Text>
+
+      {/* Login Button */}
       <Button
         title="Login"
         onPress={() => router.push("/login")}
         customStyle={{
-          marginTop: 40,
-          paddingHorizontal: 20,
-          paddingVertical: 12,
+          marginTop: height * 0.02,
+          paddingHorizontal: width * 0.05,
+          paddingVertical: height * 0.015,
           borderRadius: 16,
-          width: '80%',
-          alignItems: 'center',
-          justifyContent: 'center',
+          width: width * 0.85,
+          alignItems: "center",
+          justifyContent: "center",
         }}
-        gradientColors={['#293CA5', '#1A2668']}
+        gradientColors={["#293CA5", "#1A2668"]}
         gradientStart={{ x: 0.19, y: 0 }}
         gradientEnd={{ x: 0.32, y: 1 }}
       />
-      
-      {/* Sign Up Button with ONLY inner blue border */}
+
+      {/* Sign Up Button */}
       <Button
         title="Sign Up"
         onPress={() => router.push("/signup")}
         customStyle={{
           marginTop: -8,
-          paddingHorizontal: 20,
-          paddingVertical: 12,
+          paddingHorizontal: width * 0.05,
+          paddingVertical: height * 0.015,
           borderRadius: 16,
-          width: '95%',
-          
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor: 'transparent',
+          width: width * 0.85,
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "transparent",
         }}
         gradientColors={null}
         innerBorderOnly={true}
