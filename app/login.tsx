@@ -1,71 +1,140 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Image } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  KeyboardAvoidingView,
+  ScrollView,
+  Platform,
+  Dimensions,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
 import Button from "@/components/button";
 import { supabase } from "@/lib/supabase";
-import { useRouter } from "expo-router";
 import tw from "twrnc";
+
+const { width, height } = Dimensions.get("window");
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState(""); // Holds the error message
+  const [errorMessage, setErrorMessage] = useState("");
   const router = useRouter();
 
   const handleLogin = async () => {
     setErrorMessage("");
-    const { user, error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
     if (error) {
-      setErrorMessage(error.message); // Show error below inputs
+      setErrorMessage(error.message);
     } else {
-      router.push("/home"); // Redirect to home page after login
+      router.push("/home");
     }
   };
 
   return (
-    <View className="flex-1 bg-[#0A0E1F] px-6 pt-20 justify-start ">
-      <TouchableOpacity
-      className="absolute top-5 mt-8 left-6 p-3 border w-full max-w-[40px] h-full max-h-[40px] items-center border-[#5C5E67] rounded-2xl"
-      onPress={() => {
-        router.push("/signup");
-      }}
+    <SafeAreaView className="flex-1 bg-[#0A0E1F]">
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        className="flex-1"
       >
-      <Image
-        source={require("@/assets/images/back-arrow.png")}
-        className="w-4 h-4 "
-        style={{ tintColor: "#5C5E67" }}
-      />
-      </TouchableOpacity>
-      <Text className="text-white text-3xl font-semibold ml-6 mt-16 mb-4">Login</Text>
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View className="flex-1 px-6 justify-start">
+            {/* Back Button */}
+            <TouchableOpacity
+              className="absolute top-5 left-6 p-3 border items-center border-[#5C5E67] rounded-2xl"
+              style={{ width: width * 0.12, height: width * 0.12 }}
+              onPress={() => router.push("/")}
+            >
+              <Image
+                source={require("@/assets/images/back-arrow.png")}
+                className="w-4 h-4"
+                style={{ tintColor: "#5C5E67" }}
+              />
+            </TouchableOpacity>
 
-      <View className="mt-6 w-full  items-center">
-        <TextInput
-          className="bg-transparent text-white p-4 rounded-2xl w-full max-w-[300px] h-full max-h-[60px]  mb-5 text-base border border-[#5C5E67]"
-          placeholder="E-mail address"
-          placeholderTextColor="gray"
-          keyboardType="email-address"
-          value={email}
-          onChangeText={setEmail}
-        />
+            {/* Title */}
+            <Text
+              className="text-white font-semibold "
+              style={{
+                fontSize: width * 0.08, // Responsive font size
+                marginLeft: width * 0.08,
+                marginBottom: width * 0.12,
+                marginTop: width * 0.30,
+              }}
+            >
+              Login
+            </Text>
 
-        <TextInput
-          className="bg-transparent text-white p-4 rounded-2xl w-full max-w-[300px] h-full max-h-[60px] mb-5 text-base border border-[#5C5E67]"
-          placeholder="Password"
-          placeholderTextColor="gray"
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-        />
+            {/* Input Fields */}
+            <View className="w-full items-center">
+              <TextInput
+                className="bg-transparent text-white p-4 rounded-2xl border border-[#5C5E67]"
+                style={{
+                  width: width * 0.75, // 85% of screen width
+                  height: height * 0.07, // 7% of screen height
+                  fontSize: width * 0.045, // Responsive font size
+                }}
+                placeholder="E-mail address"
+                placeholderTextColor="gray"
+                keyboardType="email-address"
+                value={email}
+                onChangeText={setEmail}
+              />
 
-        <Button title="Login" onPress={handleLogin} />
-        {errorMessage ? (
-          <Text className="text-red-500 text-center mb-4">{errorMessage}</Text>
-        ) : null}
-      </View>
-    </View>
+              <TextInput
+                className="bg-transparent text-white p-4 rounded-2xl border border-[#5C5E67] mt-4"
+                style={{
+                  width: width * 0.75,
+                  height: height * 0.07,
+                  fontSize: width * 0.045,
+                }}
+                placeholder="Password"
+                placeholderTextColor="gray"
+                secureTextEntry
+                value={password}
+                onChangeText={setPassword}
+              />
+
+              {/* Login Button */}
+              <Button
+                title="Login"
+                onPress={handleLogin}
+                customStyle={{
+                  marginTop: height * 0.04,
+                  paddingVertical: 12,
+                  borderRadius: 16,
+                  width: width * 0.75,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+                gradientColors={["#3D5AFE", "#253698"]}
+                gradientStart={{ x: 0.19, y: 0 }}
+                gradientEnd={{ x: 0.52, y: 1 }}
+              />
+
+              {errorMessage ? (
+                <Text
+                  className="text-red-500 text-center mt-4"
+                  style={{ fontSize: width * 0.04 }}
+                >
+                  {errorMessage}
+                </Text>
+              ) : null}
+            </View>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 };
 

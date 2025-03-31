@@ -35,7 +35,7 @@ const Button: React.FC<ButtonProps> = ({
           colors={gradientColors}
           start={gradientStart}
           end={gradientEnd}
-          style={[tw`p-4 rounded-lg items-center justify-center`, { width: "100%" }]}
+          style={[tw`p-4 rounded-2xl items-center justify-center`, { width: "100%" }]}
         >
           <Text style={tw`text-white text-2xl font-extrabold`}>{title}</Text>
         </LinearGradient>
@@ -53,7 +53,7 @@ const Button: React.FC<ButtonProps> = ({
         >
           {innerBorderOnly ? (
             <View style={[
-              tw`border rounded-lg items-center justify-center w-full`,
+              tw`border rounded-2xl items-center justify-center w-full`,
               {
                 borderColor: innerBorderColor,
                 paddingVertical: 12,

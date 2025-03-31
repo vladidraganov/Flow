@@ -2,9 +2,10 @@ import { Text, View, Dimensions } from "react-native";
 import Logo from "../assets/images/svg_images/welcome.svg";
 import Button from "@/components/button";
 import tw from "twrnc";
+import { useRouter } from "expo-router";
 
 const { height } = Dimensions.get("window");
-const { router } = require("expo-router");
+const router = useRouter();
 
 export default function Index() {
   return (
