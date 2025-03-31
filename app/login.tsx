@@ -34,7 +34,7 @@ const LoginScreen = () => {
     if (error) {
       setErrorMessage(error.message);
     } else {
-      router.push("/");
+      router.push("/home");
     }
   };
 
