@@ -60,7 +60,7 @@ const LoginScreen = () => {
                 justifyContent: "center",
                 alignItems: "center",
               }}
-              onPress={() => router.push("/")}
+              onPress={() => router.push("/welcome")}
             >
               <Image
                 source={require("@/assets/images/back-arrow.png")}
