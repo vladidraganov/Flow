@@ -8,7 +8,7 @@ const home = () => {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    router.push('/login');
+    router.replace("/welcome"); // Redirect to the welcome page after logout
   };
 
   return (

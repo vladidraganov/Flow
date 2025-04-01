@@ -69,7 +69,6 @@ export default function Index() {
         innerBorderOnly={true}
         innerBorderColor="#B0B0B0"
       />
-
     </View>
   );
 }
