@@ -20,17 +20,32 @@ const { width, height } = Dimensions.get("window");
 const SignUpScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [fullName, setFullName] = useState("");
+  const [username, setUsername] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const router = useRouter();
 
   const handleSignUp = async () => {
     setErrorMessage("");
-    const { error } = await supabase.auth.signUp({ email, password });
+    const { data, error } = await supabase.auth.signUp({ email, password });
+
+    console.log("SignUp Response:", data, error); // Debugging log
 
     if (error) {
       setErrorMessage(error.message);
     } else {
+      const userId = data.user?.id;
+      if (userId) {
+        const { error: profileError } = await supabase
+          .from("profiles")
+          .insert({ user_id: userId, username });
+
+        console.log("Profile Insert Response:", profileError); // Debugging log
+
+        if (profileError) {
+          setErrorMessage(profileError.message);
+          return;
+        }
+      }
       router.push("/login");
     }
   };
@@ -94,10 +109,10 @@ const SignUpScreen = () => {
                   paddingVertical: height * 0.02,
                   marginBottom: width * 0.015,
                 }}
-                placeholder="Full Name"
+                placeholder="Username"
                 placeholderTextColor="gray"
-                value={fullName}
-                onChangeText={setFullName}
+                value={username}
+                onChangeText={setUsername}
               />
 
               <TextInput
