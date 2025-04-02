@@ -12,6 +12,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { supabase } from "@/lib/supabase";
 import Button from "@/components/button";
 import { useRouter } from "expo-router";
+import * as ImagePicker from "expo-image-picker";
 
 const { width, height } = Dimensions.get("window");
 
@@ -19,6 +20,7 @@ const EditProfileScreen = () => {
   const [username, setUsername] = useState("");
   const [fullName, setFullName] = useState("");
   const [profilePictureUrl, setProfilePictureUrl] = useState("");
+  const [customProfilePictureUrl, setCustomProfilePictureUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -34,7 +36,7 @@ const EditProfileScreen = () => {
 
       const { data, error } = await supabase
         .from("profiles")
-        .select("username, full_name, profile_picture_id")
+        .select("username, full_name, profile_picture_id, custom_profile_picture_url")
         .eq("user_id", user.id)
         .single();
 
@@ -43,8 +45,9 @@ const EditProfileScreen = () => {
       } else {
         setUsername(data.username || "");
         setFullName(data.full_name || "");
+        setCustomProfilePictureUrl(data.custom_profile_picture_url || "");
 
-        if (data.profile_picture_id) {
+        if (!data.custom_profile_picture_url && data.profile_picture_id) {
           const { data: pictureData, error: pictureError } = await supabase
             .from("profile_pictures")
             .select("image_url")
@@ -63,6 +66,37 @@ const EditProfileScreen = () => {
 
     fetchProfile();
   }, []);
+
+  const handleUploadPicture = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      const file = result.assets[0];
+      const fileName = file.uri.split("/").pop();
+      const { data, error } = await supabase.storage
+        .from("profile-pictures")
+        .upload(`custom/${fileName}`, {
+          uri: file.uri,
+          type: "image/jpeg",
+          name: fileName,
+        });
+
+      if (error) {
+        alert("Failed to upload image. Please try again.");
+        console.error(error);
+      } else {
+        const { data: publicUrlData } = supabase.storage
+          .from("profile-pictures")
+          .getPublicUrl(data.path);
+        setCustomProfilePictureUrl(publicUrlData.publicUrl);
+      }
+    }
+  };
 
   const handleSave = async () => {
     setLoading(true);
@@ -90,7 +124,11 @@ const EditProfileScreen = () => {
       // Update the profile in the database
       const { error: updateError } = await supabase
         .from("profiles")
-        .update({ username: username.trim(), full_name: fullName.trim() })
+        .update({
+          username: username.trim(),
+          full_name: fullName.trim(),
+          custom_profile_picture_url: customProfilePictureUrl || null,
+        })
         .eq("user_id", user.id);
 
       if (updateError) {
@@ -99,23 +137,7 @@ const EditProfileScreen = () => {
         return;
       }
 
-      // Fetch the updated profile to verify changes
-      const { data: updatedProfile, error: fetchError } = await supabase
-        .from("profiles")
-        .select("username, full_name")
-        .eq("user_id", user.id)
-        .single();
-
-      if (fetchError) {
-        alert("Failed to fetch updated profile. Please try again.");
-      } else if (updatedProfile) {
-        setUsername(updatedProfile.username || "");
-        setFullName(updatedProfile.full_name || "");
-        alert("Profile updated successfully!");
-      } else {
-        alert("No updated profile data found.");
-      }
-
+      alert("Profile updated successfully!");
       router.push("/(tabs)/profile");
     } catch (err) {
       alert("An unexpected error occurred. Please try again.");
@@ -138,13 +160,13 @@ const EditProfileScreen = () => {
             marginTop: height * 0.05,
             marginBottom: height * 0.02,
             overflow: "hidden",
-            backgroundColor: profilePictureUrl ? "transparent" : "gray",
+            backgroundColor: customProfilePictureUrl || profilePictureUrl ? "transparent" : "gray",
           }}
-          onPress={() => console.log("Change Profile Picture")}
+          onPress={handleUploadPicture}
         >
-          {profilePictureUrl ? (
+          {customProfilePictureUrl || profilePictureUrl ? (
             <Image
-              source={{ uri: profilePictureUrl }}
+              source={{ uri: customProfilePictureUrl || profilePictureUrl }}
               style={{ width: "100%", height: "100%" }}
               resizeMode="cover"
             />

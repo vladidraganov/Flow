@@ -19,6 +19,7 @@ const profile = () => {
   const [fullName, setFullName] = useState("");
   const [loading, setLoading] = useState(true);
   const [profilePictureUrl, setProfilePictureUrl] = useState("");
+  const [customProfilePictureUrl, setCustomProfilePictureUrl] = useState("");
   const [level, setLevel] = useState(0);
 
   useEffect(() => {
@@ -35,7 +36,7 @@ const profile = () => {
 
         const { data, error } = await supabase
           .from("profiles")
-          .select("username, full_name, user_id, profile_picture_id, level")
+          .select("username, full_name, user_id, profile_picture_id, custom_profile_picture_url, level")
           .eq("user_id", user.id)
           .single();
 
@@ -46,8 +47,9 @@ const profile = () => {
           setUsername(data.username);
           setFullName(data.full_name || "Unknown Name");
           setLevel(data.level || 0);
+          setCustomProfilePictureUrl(data.custom_profile_picture_url || "");
 
-          if (data.profile_picture_id) {
+          if (!data.custom_profile_picture_url && data.profile_picture_id) {
             const { data: pictureData, error: pictureError } = await supabase
               .from("profile_pictures")
               .select("image_url")
@@ -99,12 +101,12 @@ const profile = () => {
             marginBottom: height * 0.01,
             marginTop: height * 0.02,
             overflow: "hidden",
-            backgroundColor: profilePictureUrl ? "transparent" : "gray",
+            backgroundColor: customProfilePictureUrl || profilePictureUrl ? "transparent" : "gray",
           }}
         >
-          {profilePictureUrl ? (
+          {customProfilePictureUrl || profilePictureUrl ? (
             <Image
-              source={{ uri: profilePictureUrl }}
+              source={{ uri: customProfilePictureUrl || profilePictureUrl }}
               style={{ width: "100%", height: "100%" }}
               resizeMode="cover"
             />
