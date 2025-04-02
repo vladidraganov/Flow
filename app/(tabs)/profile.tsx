@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, Dimensions, ScrollView, Image } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import StatisticsIcon from '@/assets/icons/statistics-icon.svg';
@@ -18,6 +18,8 @@ const profile = () => {
   const [username, setUsername] = useState("");
   const [fullName, setFullName] = useState("");
   const [loading, setLoading] = useState(true);
+  const [profilePictureUrl, setProfilePictureUrl] = useState("");
+  const [level, setLevel] = useState(0);
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -33,7 +35,7 @@ const profile = () => {
 
         const { data, error } = await supabase
           .from("profiles")
-          .select("username, full_name, user_id")
+          .select("username, full_name, user_id, profile_picture_id, level")
           .eq("user_id", user.id)
           .single();
 
@@ -43,6 +45,21 @@ const profile = () => {
           console.log("Fetched profile data:", data); // Debugging log
           setUsername(data.username);
           setFullName(data.full_name || "Unknown Name");
+          setLevel(data.level || 0);
+
+          if (data.profile_picture_id) {
+            const { data: pictureData, error: pictureError } = await supabase
+              .from("profile_pictures")
+              .select("image_url")
+              .eq("id", data.profile_picture_id)
+              .single();
+
+            if (pictureError) {
+              console.error("Error fetching profile picture:", pictureError);
+            } else if (pictureData) {
+              setProfilePictureUrl(pictureData.image_url);
+            }
+          }
         }
       } catch (err) {
         console.error("Unexpected error:", err);
@@ -75,14 +92,24 @@ const profile = () => {
 
         {/* Profile Picture */}
         <View
-          className="bg-gray-500 rounded-full"
+          className="rounded-full"
           style={{
             width: width * 0.35,
             height: width * 0.35,
             marginBottom: height * 0.01,
             marginTop: height * 0.02,
+            overflow: "hidden",
+            backgroundColor: profilePictureUrl ? "transparent" : "gray",
           }}
-        />
+        >
+          {profilePictureUrl ? (
+            <Image
+              source={{ uri: profilePictureUrl }}
+              style={{ width: "100%", height: "100%" }}
+              resizeMode="cover"
+            />
+          ) : null}
+        </View>
 
         {/* Full Name and Username */}
         <Text
@@ -144,7 +171,7 @@ const profile = () => {
               marginBottom: height * 0.04,
             }}
           >
-            LV 10
+            LV {loading ? "..." : level}
           </Text>
           <View style={{ width: "70%" }}>
             <View className=" bg-[#2A2A3C] rounded-full mt-2" style={{ height: height * 0.04 }}>
@@ -188,8 +215,8 @@ const profile = () => {
               Inventory
             </Text>
             <InventoryIcon
-              width={width * 0.12}
-              height={width * 0.12}
+              width={width * 0.11}
+              height={width * 0.11}
             />
           </TouchableOpacity>
           <TouchableOpacity
@@ -209,8 +236,8 @@ const profile = () => {
               Store
             </Text>
             <StoreIcon
-              width={width * 0.12}
-              height={width * 0.12}
+              width={width * 0.1}
+              height={width * 0.1}
             />
           </TouchableOpacity>
         </View>

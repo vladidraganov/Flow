@@ -21,6 +21,7 @@ const SignUpScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
+  const [fullName, setFullName] = useState(""); // Add state for full name
   const [errorMessage, setErrorMessage] = useState("");
   const router = useRouter();
 
@@ -37,7 +38,7 @@ const SignUpScreen = () => {
       if (userId) {
         const { error: profileError } = await supabase
           .from("profiles")
-          .insert({ user_id: userId, username });
+          .insert({ user_id: userId, username, full_name: fullName }); // Include full_name
 
         console.log("Profile Insert Response:", profileError); // Debugging log
 
@@ -107,6 +108,23 @@ const SignUpScreen = () => {
                   fontSize: width * 0.045,
                   paddingHorizontal: width * 0.04,
                   paddingVertical: height * 0.02,
+                  marginBottom: width * 0.015,
+                  marginTop: height * 0.02,
+                }}
+                placeholder="Full Name"
+                placeholderTextColor="gray"
+                value={fullName} // Bind to fullName state
+                onChangeText={setFullName} // Update fullName state
+              />
+              <TextInput
+                className="bg-transparent text-white rounded-2xl border border-[#5C5E67]"
+                style={{
+                  width: width * 0.79,
+                  height: height * 0.08,
+                  fontSize: width * 0.045,
+                  paddingHorizontal: width * 0.04,
+                  paddingVertical: height * 0.02,
+                  marginTop: height * 0.02,
                   marginBottom: width * 0.015,
                 }}
                 placeholder="Username"

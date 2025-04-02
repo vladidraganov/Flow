@@ -18,7 +18,7 @@ const { width, height } = Dimensions.get("window");
 const EditProfileScreen = () => {
   const [username, setUsername] = useState("");
   const [fullName, setFullName] = useState("");
-  const [profilePicture, setProfilePicture] = useState(null);
+  const [profilePictureUrl, setProfilePictureUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -34,7 +34,7 @@ const EditProfileScreen = () => {
 
       const { data, error } = await supabase
         .from("profiles")
-        .select("username, full_name")
+        .select("username, full_name, profile_picture_id")
         .eq("user_id", user.id)
         .single();
 
@@ -43,6 +43,20 @@ const EditProfileScreen = () => {
       } else {
         setUsername(data.username || "");
         setFullName(data.full_name || "");
+
+        if (data.profile_picture_id) {
+          const { data: pictureData, error: pictureError } = await supabase
+            .from("profile_pictures")
+            .select("image_url")
+            .eq("id", data.profile_picture_id)
+            .single();
+
+          if (pictureError) {
+            console.error("Error fetching profile picture:", pictureError);
+          } else if (pictureData) {
+            setProfilePictureUrl(pictureData.image_url);
+          }
+        }
       }
       setLoading(false);
     };
@@ -117,19 +131,22 @@ const EditProfileScreen = () => {
       >
         {/* Profile Picture */}
         <TouchableOpacity
-          className="bg-gray-500 rounded-full"
+          className="rounded-full"
           style={{
             width: width * 0.35,
             height: width * 0.35,
             marginTop: height * 0.05,
             marginBottom: height * 0.02,
+            overflow: "hidden",
+            backgroundColor: profilePictureUrl ? "transparent" : "gray",
           }}
           onPress={() => console.log("Change Profile Picture")}
         >
-          {profilePicture ? (
+          {profilePictureUrl ? (
             <Image
-              source={{ uri: profilePicture }}
-              style={{ width: "100%", height: "100%", borderRadius: width * 0.175 }}
+              source={{ uri: profilePictureUrl }}
+              style={{ width: "100%", height: "100%" }}
+              resizeMode="cover"
             />
           ) : (
             <Text className="text-white text-center" style={{ marginTop: height * 0.12 }}>
