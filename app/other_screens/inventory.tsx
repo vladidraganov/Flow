@@ -125,7 +125,7 @@ const Inventory = () => {
             justifyContent: "center",
             alignItems: "center",
           }}
-          onPress={() => router.push("/profile")}
+          onPress={() => router.back()}
         >
           <Image
             source={require("@/assets/images/back-arrow.png")}
