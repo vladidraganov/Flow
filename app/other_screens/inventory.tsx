@@ -80,9 +80,6 @@ const Inventory = () => {
   // Render each grouped power-up item
   const renderPowerup = ({ item }) => (
     <TouchableOpacity style={styles.powerupCard}>
-      {/* Power-up Name */}
-      <Text style={styles.powerupName}>{item.powerups.name}</Text>
-
       {/* Power-up Icon */}
       {item.powerups.icon_url && item.powerups.icon_url.endsWith(".svg") ? (
         <SvgUri
@@ -96,19 +93,7 @@ const Inventory = () => {
       )}
 
       {/* Power-up Count */}
-      <Text style={styles.powerupCount}>Count: {item.count}</Text>
-
-      {/* Power-up Status */}
-      <Text style={styles.powerupStatus}>
-        {item.activated_at
-          ? `Activated: ${new Date(item.activated_at).toLocaleString()}`
-          : "Not Activated"}
-      </Text>
-      {item.expires_at && (
-        <Text style={styles.powerupStatus}>
-          Expires: {new Date(item.expires_at).toLocaleString()}
-        </Text>
-      )}
+      <Text style={styles.powerupCount}>{item.count}</Text>
     </TouchableOpacity>
   );
 
@@ -123,34 +108,34 @@ const Inventory = () => {
         style={{
           height: height * 0.138,
           marginBottom: height * 0.03,
-          borderBottomLeftRadius: 20,
-          borderBottomRightRadius: 20,
+          borderBottomLeftRadius: 30,
+          borderBottomRightRadius: 30,
           paddingHorizontal: 16,
           justifyContent: "center",
           alignItems: "center",
         }}
       >
         <TouchableOpacity
-            className="absolute border border-[#5C5E67] rounded-2xl"
-                style={{
-                    width: width * 0.12,
-                    height: width * 0.12,
-                    top: height * 0.02,
-                    left: width * 0.06,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    }}
-                     onPress={() => router.push("/profile")}
-                      >
-                     <Image
-                     source={require("@/assets/images/back-arrow.png")}
-                     style={{
-                     width: width * 0.05, // Make arrow responsive
-                     height: width * 0.05,
-                     tintColor: "#5C5E67",
-                     }}
-                     />
-            </TouchableOpacity>
+          className="absolute border border-[#5C5E67] rounded-2xl"
+          style={{
+            width: width * 0.12,
+            height: width * 0.12,
+            top: height * 0.02,
+            left: width * 0.06,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+          onPress={() => router.push("/profile")}
+        >
+          <Image
+            source={require("@/assets/images/back-arrow.png")}
+            style={{
+              width: width * 0.05, // Make arrow responsive
+              height: width * 0.05,
+              tintColor: "#5C5E67",
+            }}
+          />
+        </TouchableOpacity>
         {/* Title */}
         <Text
           style={{
@@ -166,9 +151,10 @@ const Inventory = () => {
       {/* Power-ups List */}
       <FlatList
         data={groupedPowerups}
+        key={`numColumns-${3}`} // Force re-render when numColumns changes
         keyExtractor={(item) => item.powerup_id.toString()}
         renderItem={renderPowerup}
-        numColumns={2}
+        numColumns={3} // Display 3 cards in a row
         contentContainerStyle={styles.listContainer}
       />
     </SafeAreaView>
@@ -177,16 +163,20 @@ const Inventory = () => {
 
 const styles = StyleSheet.create({
   listContainer: {
-    paddingHorizontal: width * 0.05,
+    paddingHorizontal: width * 0.03, // Adjust padding for smaller cards
     paddingBottom: height * 0.02,
   },
   powerupCard: {
     backgroundColor: "#0E1325",
-    borderRadius: 30,
-    padding: width * 0.04,
-    margin: width * 0.025,
+    borderRadius: 20, // Smaller radius for smaller cards
+    padding: width * 0.03, // Reduced padding
+    margin: width * 0.02, // Adjust margin for spacing
     alignItems: "center",
-    width: width * 0.4,
+    width: width * 0.27, // Smaller width for 3 cards in a row
+    height: height * 0.13, // Reduced height
+    position: "relative", // For positioning the count
+    borderWidth: 3, // Add border
+    borderColor: "#151C32", // Border color
   },
   placeholderText: {
     color: "#6c757d",
@@ -201,16 +191,12 @@ const styles = StyleSheet.create({
     marginBottom: height * 0.01,
   },
   powerupCount: {
-    color: "#FFD700",
-    fontSize: width * 0.04,
+    position: "absolute",
+    bottom: 5, // Adjusted for smaller card
+    right: 9, // Adjusted for smaller card
+    color: "#FFFFFF",
+    fontSize: width * 0.038, // Slightly smaller font size
     fontWeight: "bold",
-    marginTop: height * 0.01,
-  },
-  powerupStatus: {
-    color: "#28a745",
-    fontSize: width * 0.035,
-    textAlign: "center",
-    marginTop: height * 0.005,
   },
 });
 
