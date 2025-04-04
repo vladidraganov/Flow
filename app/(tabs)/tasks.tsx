@@ -13,6 +13,7 @@ import {
 import { FontAwesome5 } from "@expo/vector-icons";
 import { supabase } from "@/lib/supabase";
 import Header from "@/components/header";
+import { LinearGradient } from "expo-linear-gradient";
 
 const screenHeight = Dimensions.get("window").height;
 
@@ -189,69 +190,129 @@ const TasksScreen = () => {
   };
 
   const renderTask = (task: Task) => (
-    <Animated.View
+    <LinearGradient
       key={task.id}
-      style={{ opacity: fadeAnims[task.id] }} // Apply fade-out effect
-      className="bg-[#151C32] mx-4 my-2 rounded-xl overflow-hidden"
+      colors={["#13172D", "#0C1022"]}
+      locations={[0.0, 0.7]}
+      start={{ x: 1, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={{ borderRadius: 15, marginHorizontal: 16, marginVertical: 8, paddingVertical: 8 }}
     >
-      <View className="flex-row items-center justify-between p-4">
-        <Text className="text-white text-base font-medium">{task.title}</Text>
-        <View className="flex-row items-center">
-          {activeTab === "daily" && (
-            <Text className="text-yellow-500 mr-2">+{task.xp_reward || 10} XP</Text>
-          )}
-          <TouchableOpacity
-            onPress={() => markTaskComplete(task)}
-            className={`px-4 py-2 rounded-lg ${completedTasks[task.id] ? "bg-green-600" : "bg-[#29366D]"}`}
-          >
-            <Text className="text-white font-medium">
-              {completedTasks[task.id] ? "Completed" : "Complete"}
-            </Text>
-          </TouchableOpacity>
+      <Animated.View
+        style={{ opacity: fadeAnims[task.id] }} // Apply fade-out effect
+        className="rounded-xl overflow-hidden"
+      >
+        <View className="flex-row items-center justify-between p-4">
+          <Text className="text-white text-base font-medium">{task.title}</Text>
+          <View className="flex-row items-center">
+            {activeTab === "daily" && (
+              <Text className="text-yellow-500 mr-2">+{task.xp_reward || 10} XP</Text>
+            )}
+            <LinearGradient
+              colors={["#3D5AFE", "#253698"]}
+              start={{ x: 1, y: 0.3 }}
+              end={{ x: 1, y: 1 }}
+              style={{ borderRadius: 20 }}
+            >
+              <TouchableOpacity
+                onPress={() => markTaskComplete(task)}
+                className="px-4 py-2 rounded-lg"
+              >
+                <Text className="text-white font-medium">
+                  {completedTasks[task.id] ? "Completed" : "Complete"}
+                </Text>
+              </TouchableOpacity>
+            </LinearGradient>
+          </View>
         </View>
-      </View>
-    </Animated.View>
+      </Animated.View>
+    </LinearGradient>
   );
 
   return (
     <SafeAreaView className="flex-1 bg-[#0A0E1F]">
-      <Header />
-
-      <View className="mt-6 mb-4 px-4">
-        <Text className="text-white text-2xl font-bold">Your tasks</Text>
+      {/* Fixed Header */}
+      <View style={{ position: "absolute", top: 0, width: "100%", zIndex: 10 }}>
+        <Header />
       </View>
 
-      <View className="flex-row mx-4 mb-4">
-        <TouchableOpacity
-          onPress={() => setActiveTab("daily")}
-          className={`py-2 px-6 rounded-full mr-2 ${activeTab === "daily" ? "bg-[#3366FF]" : "bg-[#1A2244]"}`}
-        >
-          <Text className="text-white font-medium">Daily</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => setActiveTab("personal")}
-          className={`py-2 px-6 rounded-full ${activeTab === "personal" ? "bg-[#3366FF]" : "bg-[#1A2244]"}`}
-        >
-          <Text className="text-white font-medium">Personal</Text>
-        </TouchableOpacity>
-      </View>
+      {/* Scrollable Content */}
+      <ScrollView
+        contentContainerStyle={{
+          paddingTop: screenHeight * 0.138, // Offset for the fixed header
+          paddingBottom: screenHeight * 0.02,
+        }}
+      >
+        <View className="mt-6 mb-4 px-4">
+          <Text className="text-white text-2xl font-bold">Your tasks</Text>
+        </View>
 
-      <ScrollView className="flex-1">
+        <View className="flex-row mx-4 mb-4">
+          <LinearGradient
+            colors={["#3D5AFE", "#253698"]}
+            start={{ x: 1, y: 0.3 }}
+            end={{ x: 1, y: 1 }}
+            style={{
+              borderRadius: 20,
+              overflow: "hidden",
+              marginRight: 8,
+            }}
+          >
+            <TouchableOpacity
+              onPress={() => setActiveTab("daily")}
+              className={`py-2 px-6 ${activeTab === "daily" ? "" : "bg-[#1A2244]"}`}
+            >
+              <Text className="text-white font-medium">Daily</Text>
+            </TouchableOpacity>
+          </LinearGradient>
+          <LinearGradient
+            colors={["#3D5AFE", "#253698"]}
+            start={{ x: 1, y: 0.3 }}
+            end={{ x: 1, y: 1 }}
+            style={{
+              borderRadius: 20,
+              overflow: "hidden",
+            }}
+          >
+            <TouchableOpacity
+              onPress={() => setActiveTab("personal")}
+              className={`py-2 px-6 ${activeTab === "personal" ? "" : "bg-[#1A2244]"}`}
+            >
+              <Text className="text-white font-medium">Personal</Text>
+            </TouchableOpacity>
+          </LinearGradient>
+        </View>
+
         {activeTab === "daily"
           ? tasks.map(renderTask)
-          : personalTasks.map(renderTask)
-        }
+          : personalTasks.map(renderTask)}
 
         <View className="h-20" />
       </ScrollView>
 
       {activeTab === "personal" && (
-        <TouchableOpacity
-          onPress={() => setModalVisible(true)}
-          className="absolute bottom-20 right-6 w-14 h-14 rounded-full bg-[#3366FF] items-center justify-center shadow-lg"
+        <LinearGradient
+          colors={["#3D5AFE", "#253698"]}
+          start={{ x: 1, y: 0.3 }}
+          end={{ x: 1, y: 1 }}
+          style={{
+            borderRadius: 50,
+            position: "absolute",
+            bottom: 20,
+            right: 6,
+            width: 56,
+            height: 56,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
         >
-          <FontAwesome5 name="plus" size={24} color="white" />
-        </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => setModalVisible(true)}
+            className="w-full h-full rounded-full items-center justify-center"
+          >
+            <FontAwesome5 name="plus" size={24} color="white" />
+          </TouchableOpacity>
+        </LinearGradient>
       )}
 
       {/* Modal for Adding Task */}

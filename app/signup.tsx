@@ -180,9 +180,9 @@ const SignUpScreen = () => {
                   alignItems: "center",
                   justifyContent: "center",
                 }}
-                gradientColors={["#293CA5", "#1A2668"]}
-                gradientStart={{ x: 0.19, y: 0 }}
-                gradientEnd={{ x: 0.32, y: 1 }}
+                gradientColors={["#3D5AFE", "#253698"]}
+                gradientStart={{ x: 1, y: 0.3 }}
+                gradientEnd={{ x: 1, y: 1 }}
               />
 
               {errorMessage ? (

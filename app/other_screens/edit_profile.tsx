@@ -261,14 +261,21 @@ const EditProfileScreen = () => {
           onPress={handleSave}
           customStyle={{
             marginTop: height * 0.02,
-            height: height * 0.08,
+            height: height * 0.09,
             width: width * 0.85,
             alignItems: "center",
             justifyContent: "center",
           }}
-          gradientColors={["#293CA5", "#1A2668"]}
-          gradientStart={{ x: 0.19, y: 0 }}
-          gradientEnd={{ x: 0.32, y: 1 }}
+          gradientColors={["#3D5AFE", "#253698"]}
+          gradientStart={{ x: 1, y: 0.3 }}
+          gradientEnd={{ x: 1, y: 1 }}
+          textStyle={{
+            fontSize: width * 0.045, // Dynamically adjust font size
+            fontWeight: "bold",
+            color: "#FFFFFF",
+            textAlign: "center", // Ensure text is horizontally centered
+            lineHeight: height * 0.08, // Match line height to button height
+          }}
           disabled={loading}
         />
       </ScrollView>

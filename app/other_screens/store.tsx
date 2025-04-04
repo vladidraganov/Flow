@@ -121,28 +121,53 @@ const Store = () => {
 
   // Render each power-up item
   const renderPowerup = ({ item }) => (
-    <TouchableOpacity style={styles.powerupCard} onPress={() => confirmPurchase(item)}>
-      {/* Power-up Name */}
-      <Text style={styles.powerupName}>{item.name}</Text>
+    <View style={{ marginBottom: height * 0.05, width: width * 0.4, marginRight: width * 0.05 }}>
+      <LinearGradient
+        colors={["#13172D", "#0C1022"]}
+        locations={[0.0, 0.7]}
+        start={{ x: 1, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={{
+          borderRadius: 30,
+          padding: width * 0.05,
+          alignItems: "center",
+          width: "100%",
+          height: height * 0.2,
+        }}
+      >
+        <TouchableOpacity onPress={() => confirmPurchase(item)} style={{ alignItems: "center" }}>
+          {/* Power-up Name */}
+          <Text
+            style={styles.powerupName}
+            numberOfLines={1} // Limit to one line
+            ellipsizeMode="tail" // Add ellipsis if text overflows
+          >
+            {item.name}
+          </Text>
 
-      {/* Power-up Icon */}
-      {item.icon_url && item.icon_url.endsWith(".svg") ? (
-        <SvgUri
-          uri={item.icon_url}
-          width={width * 0.15}
-          height={width * 0.15}
-          onError={(e) => console.error("SVG load error:", e.nativeEvent.error)}
-        />
-      ) : (
-        <Text style={styles.placeholderText}>No Icon</Text>
-      )}
-
-      {/* Power-up Cost */}
-      <View style={styles.costContainer}>
+          {/* Power-up Icon */}
+          {item.icon_url && item.icon_url.endsWith(".svg") ? (
+            <SvgUri
+              uri={item.icon_url}
+              width={width * 0.15}
+              height={width * 0.15}
+              onError={(e) => console.error("SVG load error:", e.nativeEvent.error)}
+            />
+          ) : (
+            <Text style={styles.placeholderText}>No Icon</Text>
+          )}
+        </TouchableOpacity>
+      </LinearGradient>
+      <View
+        style={[
+          styles.costContainer,
+          { bottom: -(height * 0.025) }, // Dynamically position below the card
+        ]}
+      >
         <DiamondsIcon width={width * 0.05} height={width * 0.05} />
         <Text style={styles.powerupCost}>{item.cost}</Text>
       </View>
-    </TouchableOpacity>
+    </View>
   );
 
   const categories = ["xp", "streak", "task"];

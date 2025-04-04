@@ -6,14 +6,13 @@ import AchievementsIcon from '@/assets/icons/achievements-icon.svg';
 import InventoryIcon from '@/assets/icons/inventory-icon.svg';
 import StoreIcon from '@/assets/icons/store-icon.svg';
 import SettingsIcon from '@/assets/icons/settings-icon.svg';
-import { useNavigation } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const { width, height } = Dimensions.get("window");
 
 const profile = () => {
-  const navigation = useNavigation();
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [fullName, setFullName] = useState("");
@@ -32,8 +31,6 @@ const profile = () => {
           return;
         }
 
-        console.log("Authenticated user ID:", user.id); // Debugging log
-
         const { data, error } = await supabase
           .from("profiles")
           .select("username, full_name, user_id, profile_picture_id, custom_profile_picture_url, level")
@@ -43,7 +40,6 @@ const profile = () => {
         if (error) {
           console.error("Error fetching profile:", error);
         } else if (data) {
-          console.log("Fetched profile data:", data); // Debugging log
           setUsername(data.username);
           setFullName(data.full_name || "Unknown Name");
           setLevel(data.level || 0);
@@ -76,225 +72,193 @@ const profile = () => {
   return (
     <SafeAreaView className="flex-1 bg-[#0A0E1F]">
       <ScrollView
-        contentContainerStyle={{ flexGrow: 1, alignItems: "center", paddingVertical: height * 0.02 }}
+        contentContainerStyle={{
+          alignItems: "center",
+          paddingVertical: height * 0.03,
+        }}
         className="bg-[#0A0E1F]"
       >
         {/* Settings Button */}
         <TouchableOpacity
+          className="absolute z-10"
           style={{
-            position: "absolute",
-            top: height * 0.02,
+            top: height * 0.03,
             right: width * 0.05,
-            zIndex: 10,
           }}
           onPress={() => router.push('../other_screens/settings')}
         >
           <SettingsIcon width={width * 0.08} height={width * 0.08} />
         </TouchableOpacity>
 
-        {/* Profile Picture */}
-        <View
-          className="rounded-full"
-          style={{
-            width: width * 0.35,
-            height: width * 0.35,
-            marginBottom: height * 0.01,
-            marginTop: height * 0.02,
-            overflow: "hidden",
-            backgroundColor: customProfilePictureUrl || profilePictureUrl ? "transparent" : "gray",
-          }}
-        >
-          {customProfilePictureUrl || profilePictureUrl ? (
-            <Image
-              source={{ uri: customProfilePictureUrl || profilePictureUrl }}
-              style={{ width: "100%", height: "100%" }}
-              resizeMode="cover"
-            />
-          ) : null}
+        {/* Profile Section */}
+        <View className="items-center mb-6">
+          <View
+            className="rounded-full overflow-hidden bg-[#2A2A3C]"
+            style={{
+              width: width * 0.35,
+              height: width * 0.35,
+              marginBottom: height * 0.02,
+            }}
+          >
+            {customProfilePictureUrl || profilePictureUrl ? (
+              <Image
+                source={{ uri: customProfilePictureUrl || profilePictureUrl }}
+                style={{ width: "100%", height: "100%" }}
+                resizeMode="cover"
+              />
+            ) : null}
+          </View>
+          <Text className="text-white font-bold" style={{ fontSize: width * 0.08, marginBottom: height * 0.005 }}>
+            {loading ? "Loading..." : fullName}
+          </Text>
+          <Text className="text-gray-400" style={{ fontSize: width * 0.045, marginBottom: height * 0.02 }}>
+            @{loading ? "loading..." : username || "unknown"}
+          </Text>
+          <LinearGradient
+            colors={["#13172D", "#0C1022"]}
+            locations={[0.0, 0.7]}
+            start={{ x: 1, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={{
+              borderRadius: 20,
+              paddingVertical: height * 0.01,
+              paddingHorizontal: width * 0.05,
+            }}
+          >
+            <TouchableOpacity
+              className="rounded-3xl"
+              onPress={() => router.push('../other_screens/edit_profile')}
+            >
+              <Text className="text-white font-medium" style={{ fontSize: width * 0.045 }}>
+                Edit Profile
+              </Text>
+            </TouchableOpacity>
+          </LinearGradient>
         </View>
 
-        {/* Full Name and Username */}
-        <Text
-          className="text-white font-bold"
-          style={{
-            fontSize: width * 0.08,
-            marginBottom: height * 0.003,
-          }}
-        >
-          {loading ? "Loading..." : fullName}
-        </Text>
-        <Text
-          className="text-gray-400"
-          style={{
-            fontSize: width * 0.04,
-            marginBottom: height * 0.01,
-          }}
-        >
-          @{loading ? "loading..." : username || "unknown"}
-        </Text>
-
-        {/* Edit Button */}
-        <TouchableOpacity
-          className="bg-[#0E1325] rounded-3xl items-center justify-center"
-          style={{
-            width: width * 0.15,
-            height: height * 0.04,
-            marginBottom: height * 0.02,
-          }}
-          onPress={() => router.push('../other_screens/edit_profile')}
-        >
-          <Text
-            className="text-white "
-            style={{
-              fontSize: width * 0.04,
-            }}
-          >
-            Edit
-          </Text>
-        </TouchableOpacity>
-
         {/* Level and Progress */}
-        <TouchableOpacity
-          className="bg-[#0E1325] rounded-3xl items-center justify-center"
+        <LinearGradient
+          colors={["#13172D", "#0C1022"]}
+          locations={[0.0, 0.7]}
+          start={{ x: 1, y: 0 }}
+          end={{ x: 1, y: 1 }}
           style={{
-            width: width * 0.85,
-            height: height * 0.12,
-            marginBottom: height * 0.02,
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-            paddingHorizontal: width * 0.05,
+            width: width * 0.9,
+            borderRadius: 20,
+            padding: width * 0.05,
+            marginBottom: height * 0.03,
           }}
         >
-          <Text
-            className="text-white font-bold"
-            style={{
-              fontSize: width * 0.07,
-              marginBottom: height * 0.04,
-            }}
-          >
-            LV {loading ? "..." : level}
-          </Text>
-          <View style={{ width: "70%" }}>
-            <View className=" bg-[#2A2A3C] rounded-full mt-2" style={{ height: height * 0.04 }}>
-              <View className="h-full bg-[#5D16A4] rounded-full" style={{ width: "50%" }} />
+          <View className="items-center">
+            <Text className="text-white font-bold" style={{ fontSize: width * 0.07, marginBottom: height * 0.01 }}>
+              Level {loading ? "..." : level}
+            </Text>
+            <View className="bg-[#2A2A3C] rounded-full overflow-hidden" style={{ width: "100%", height: height * 0.02 }}>
+              <View className="bg-[#5D16A4] h-full" style={{ width: "50%" }} />
             </View>
-            <Text
-              className="text-gray-400"
-              style={{
-                fontSize: width * 0.05,
-                textAlign: "right",
-                marginTop: height * 0.005,
-              }}
-            >
-              200/400
+            <Text className="text-gray-400" style={{ fontSize: width * 0.045, marginTop: height * 0.005 }}>
+              200 / 400 XP
             </Text>
           </View>
-        </TouchableOpacity>
+        </LinearGradient>
 
-        {/* Buttons */}
+        {/* Action Buttons */}
         <View
           className="flex-row justify-between"
           style={{
-            width: width * 0.85,
-            marginBottom: height * 0.02,
+            width: width * 0.9,
+            marginBottom: height * 0.03,
           }}
         >
-          <TouchableOpacity
-            className="bg-[#0E1325] rounded-3xl items-center justify-center"
+          <LinearGradient
+            colors={["#13172D", "#0C1022"]}
+            locations={[0.0, 0.7]}
+            start={{ x: 1, y: 0 }}
+            end={{ x: 1, y: 1 }}
             style={{
-              width: width * 0.405,
-              height: height * 0.11,
+              width: width * 0.43,
+              height: height * 0.14,
+              borderRadius: 20,
+              marginRight: width * 0.02,
             }}
-            onPress={() => router.push("../other_screens/inventory")}
           >
-            <Text
-              className="text-white"
-              style={{
-                fontSize: width * 0.05,
-                marginBottom: height * 0.01,
-              }}
+            <TouchableOpacity
+              className="items-center justify-center flex-1"
+              onPress={() => router.push("../other_screens/inventory")}
             >
-              Inventory
-            </Text>
-            <InventoryIcon
-              width={width * 0.11}
-              height={width * 0.11}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            className="bg-[#0E1325] rounded-3xl items-center justify-center"
+              <InventoryIcon width={width * 0.12} height={width * 0.12} />
+              <Text className="text-white font-medium" style={{ fontSize: width * 0.045, marginTop: height * 0.01 }}>
+                Inventory
+              </Text>
+            </TouchableOpacity>
+          </LinearGradient>
+          <LinearGradient
+            colors={["#13172D", "#0C1022"]}
+            locations={[0.0, 0.7]}
+            start={{ x: 1, y: 0 }}
+            end={{ x: 1, y: 1 }}
             style={{
-              width: width * 0.405,
-              height: height * 0.11,
+              width: width * 0.43,
+              height: height * 0.14,
+              borderRadius: 20,
             }}
-            onPress={() => router.push("../other_screens/store")}
           >
-            <Text
-              className="text-white"
-              style={{
-                fontSize: width * 0.05,
-                marginBottom: height * 0.01,
-              }}
+            <TouchableOpacity
+              className="items-center justify-center flex-1"
+              onPress={() => router.push("../other_screens/store")}
             >
-              Store
-            </Text>
-            <StoreIcon
-              width={width * 0.1}
-              height={width * 0.1}
-            />
-          </TouchableOpacity>
+              <StoreIcon width={width * 0.12} height={width * 0.12} />
+              <Text className="text-white font-medium" style={{ fontSize: width * 0.045, marginTop: height * 0.01 }}>
+                Store
+              </Text>
+            </TouchableOpacity>
+          </LinearGradient>
         </View>
 
         {/* Statistics and Achievements */}
         <View
           className="flex-row justify-between"
           style={{
-            width: width * 0.85,
+            width: width * 0.9,
           }}
         >
-          <TouchableOpacity
-            className="bg-[#0E1325] rounded-3xl items-center justify-center"
+          <LinearGradient
+            colors={["#13172D", "#0C1022"]}
+            locations={[0.0, 0.7]}
+            start={{ x: 1, y: 0 }}
+            end={{ x: 1, y: 1 }}
             style={{
-              width: width * 0.405,
-              height: height * 0.16,
+              width: width * 0.43,
+              height: height * 0.14,
+              borderRadius: 20,
+              marginRight: width * 0.02,
             }}
           >
-            <StatisticsIcon
-              width={width * 0.17}
-              height={width * 0.17}
-              style={{ marginBottom: height * 0.01, marginTop: height * 0.02, }}
-            />
-            <Text
-              className="text-white"
-              style={{
-                fontSize: width * 0.05,
-              }}
-            >
-              Statistics
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            className="bg-[#0E1325] rounded-3xl items-center justify-center"
+            <TouchableOpacity className="items-center justify-center flex-1">
+              <StatisticsIcon width={width * 0.15} height={width * 0.15} />
+              <Text className="text-white font-medium" style={{ fontSize: width * 0.045, marginTop: height * 0.01 }}>
+                Statistics
+              </Text>
+            </TouchableOpacity>
+          </LinearGradient>
+          <LinearGradient
+            colors={["#13172D", "#0C1022"]}
+            locations={[0.0, 0.7]}
+            start={{ x: 1, y: 0 }}
+            end={{ x: 1, y: 1 }}
             style={{
-              width: width * 0.405,
-              height: height * 0.16,
+              width: width * 0.43,
+              height: height * 0.14,
+              borderRadius: 20,
             }}
           >
-            <AchievementsIcon
-              width={width * 0.17}
-              height={width * 0.17}
-              style={{ marginBottom: height * 0.01, marginTop: height * 0.02, }}
-            />
-            <Text
-              className="text-white"
-              style={{
-                fontSize: width * 0.05,
-              }}
-            >
-              Achievements
-            </Text>
-          </TouchableOpacity>
+            <TouchableOpacity className="items-center justify-center flex-1">
+              <AchievementsIcon width={width * 0.15} height={width * 0.15} />
+              <Text className="text-white font-medium" style={{ fontSize: width * 0.045, marginTop: height * 0.01 }}>
+                Achievements
+              </Text>
+            </TouchableOpacity>
+          </LinearGradient>
         </View>
       </ScrollView>
     </SafeAreaView>
