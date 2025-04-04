@@ -73,7 +73,7 @@ const SignUpScreen = () => {
                 justifyContent: "center",
                 alignItems: "center",
               }}
-              onPress={() => router.push("/")}
+              onPress={() => router.back()}
             >
               <Image
                 source={require("@/assets/images/back-arrow.png")}
