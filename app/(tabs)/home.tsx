@@ -7,6 +7,7 @@ import Header from "@/components/header"; // Import the new Header component
 const screenHeight = Dimensions.get("window").height;
 const screenWidth = Dimensions.get("window").width;
 
+const PersonalTasksPercentage = "57%";
 const HomeScreen = () => {
   return (
     <SafeAreaView className="flex-1 bg-[#0A0E1F]">
@@ -49,10 +50,10 @@ const HomeScreen = () => {
           className="items-center justify-center self-center my-4"
         >
           <View className="w-[80%]">
-            <Text className="text-white text-2xl font-extrabold self-start">Personal Goals</Text>
+            <Text className="text-white text-2xl font-extrabold self-start">Personal Tasks</Text>
             <View className="w-full flex items-center">
               <View className="w-[100%] bg-[#2A2A3C] rounded-full mt-2" style={{ height: screenHeight * 0.018 }}>
-                <View className="h-full bg-[#127D26] rounded-full" style={{ width: "33%" }} />
+                <View className="h-full bg-[#127D26] rounded-full" style={{ width: {$PersonalTasksPercentage} }} />
               </View>
             </View>
           </View>

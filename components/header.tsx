@@ -3,6 +3,7 @@ import { View, Text, Image, Dimensions, SafeAreaView, ActivityIndicator } from "
 import { LinearGradient } from "expo-linear-gradient";
 import { supabase } from "@/lib/supabase";
 import { FontAwesome5 } from "@expo/vector-icons";
+import LevelXp, {getLevel} from "@/components/levelsConfig"; // Assuming you have a function to get level from XP
 
 const screenHeight = Dimensions.get("window").height;
 
@@ -11,54 +12,76 @@ const Header = () => {
   const [customProfilePictureUrl, setCustomProfilePictureUrl] = useState(null);
   const [level, setLevel] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [overallXP, setOverallXP] = useState(0);
 
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        const { data: { user }, error: userError } = await supabase.auth.getUser();
-        if (userError || !user) {
-          console.error("Error fetching user:", userError);
-          setLoading(false);
-          return;
-        }
+    
 
-        const { data, error } = await supabase
-          .from("profiles")
-          .select("profile_picture_id, custom_profile_picture_url, level")
-          .eq("user_id", user.id)
-          .single();
 
-        if (error) {
-          console.error("Error fetching profile:", error);
-        } else if (data) {
-          setLevel(data.level || 0);
-          setCustomProfilePictureUrl(data.custom_profile_picture_url);
 
-          if (!data.custom_profile_picture_url && data.profile_picture_id) {
+  
+
+
+    useEffect(() => {
+      const fetchUserProfile = async () => {
+        try {
+          setLoading(true);
+          const { data: userData, error: userError } = await supabase.auth.getUser();
+          if (userError || !userData?.user) {
+            console.error("Error fetching user:", userError);
+            return;
+          }
+  
+          const userId = userData.user.id;
+  
+          const { data: profileData, error: profileError } = await supabase
+            .from("profiles")
+            .select("profile_picture_id, custom_profile_picture_url, overall_xp")
+            .eq("user_id", userId)
+            .single();
+  
+          if (profileError) {
+            console.error("Error fetching profile:", profileError);
+            return;
+          }
+  
+          setOverallXP(profileData?.overall_xp || 0);
+          setLevel(getLevel(profileData?.overall_xp || 0));
+          setCustomProfilePictureUrl(profileData?.custom_profile_picture_url);
+  
+          if (!profileData?.custom_profile_picture_url && profileData?.profile_picture_id) {
             const { data: pictureData, error: pictureError } = await supabase
               .from("profile_pictures")
               .select("image_url")
-              .eq("id", data.profile_picture_id)
+              .eq("id", profileData.profile_picture_id)
               .single();
-
+  
             if (pictureError) {
               console.error("Error fetching profile picture:", pictureError);
-            } else if (pictureData) {
-              setProfilePictureUrl(pictureData.image_url);
+            } else {
+              setProfilePictureUrl(pictureData?.image_url);
             }
           }
+        } catch (err) {
+          console.error("Unexpected error:", err);
+        } finally {
+          setLoading(false);
         }
-      } catch (err) {
-        console.error("Unexpected error:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+      };
+  
+      fetchUserProfile();
+    }, []);
 
-    fetchUserProfile();
-  }, []);
 
+  
+  //calculate level and progress
+  const currentXP = overallXP - LevelXp[level - 1]; // current level xp
+  const nextLevelXP = LevelXp[level] - LevelXp[level - 1]; // XP for next level
+  const progressPercent = nextLevelXP ? (currentXP / nextLevelXP) * 100 : 100;
+  //image url
   const profileImage = customProfilePictureUrl || profilePictureUrl || "https://via.placeholder.com/60";
+  
+
+
 
   return (
     <SafeAreaView>
@@ -92,7 +115,7 @@ const Header = () => {
           <View style={{ marginLeft: 12 }}>
             <Text style={{ color: "white", fontWeight: "bold", fontSize: 18 }}>Lv.{level}</Text>
             <View style={{ width: 90, height: 9, backgroundColor: "#2A2A3C", borderRadius: 5, marginTop: 4 }}>
-              <View style={{ height: "100%", backgroundColor: "#4361EE", borderRadius: 5, width: "57%" }} />
+              <View style={{ height: "100%", backgroundColor: "#4361EE", borderRadius: 5, width: `${progressPercent}%` }} />
             </View>
           </View>
         </View>
