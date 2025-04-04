@@ -206,6 +206,7 @@ const profile = () => {
               width: width * 0.405,
               height: height * 0.11,
             }}
+            onPress={() => router.push("../other_screens/inventory")}
           >
             <Text
               className="text-white"
@@ -227,6 +228,7 @@ const profile = () => {
               width: width * 0.405,
               height: height * 0.11,
             }}
+            onPress={() => router.push("../other_screens/store")}
           >
             <Text
               className="text-white"

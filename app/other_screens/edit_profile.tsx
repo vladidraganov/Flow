@@ -7,6 +7,8 @@ import {
   Image,
   Dimensions,
   ScrollView,
+  Modal,
+  StyleSheet,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { supabase } from "@/lib/supabase";
@@ -22,6 +24,7 @@ const EditProfileScreen = () => {
   const [profilePictureUrl, setProfilePictureUrl] = useState("");
   const [customProfilePictureUrl, setCustomProfilePictureUrl] = useState("");
   const [loading, setLoading] = useState(false);
+  const [successModalVisible, setSuccessModalVisible] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -137,8 +140,8 @@ const EditProfileScreen = () => {
         return;
       }
 
-      alert("Profile updated successfully!");
-      router.push("/(tabs)/profile");
+      // Show success modal
+      setSuccessModalVisible(true);
     } catch (err) {
       alert("An unexpected error occurred. Please try again.");
     } finally {
@@ -151,6 +154,29 @@ const EditProfileScreen = () => {
       <ScrollView
         contentContainerStyle={{ flexGrow: 1, alignItems: "center", paddingVertical: height * 0.02 }}
       >
+        {/* Success Modal */}
+        <Modal
+          visible={successModalVisible}
+          transparent={true}
+          animationType="fade"
+          onRequestClose={() => setSuccessModalVisible(false)}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContainer}>
+              <Text style={styles.modalText}>Profile Updated Successfully!</Text>
+              <TouchableOpacity
+                style={styles.okButton}
+                onPress={() => {
+                  setSuccessModalVisible(false);
+                  router.push("/(tabs)/profile");
+                }}
+              >
+                <Text style={styles.okButtonText}>OK</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+
         {/* Profile Picture */}
         <TouchableOpacity
           className="rounded-full"
@@ -249,5 +275,39 @@ const EditProfileScreen = () => {
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.9)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContainer: {
+    backgroundColor: "#0A0E1F",
+    borderRadius: 20,
+    padding: 20,
+    alignItems: "center",
+    borderWidth: 3,
+    borderColor: "#151C32",
+  },
+  modalText: {
+    color: "#FFFFFF",
+    fontSize: width * 0.05,
+    fontWeight: "bold",
+  },
+  okButton: {
+    marginTop: 20,
+    backgroundColor: "#3D5AFE",
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+  },
+  okButtonText: {
+    color: "#FFFFFF",
+    fontSize: width * 0.04,
+    fontWeight: "bold",
+  },
+});
 
 export default EditProfileScreen;
