@@ -8,11 +8,13 @@ import {
   SafeAreaView,
   TouchableOpacity,
   Image,
+  ActivityIndicator,
 } from "react-native";
 import { SvgUri } from "react-native-svg";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
+import { useFonts } from "expo-font";
 
 const { width, height } = Dimensions.get("window");
 
@@ -20,6 +22,21 @@ const Inventory = () => {
   const router = useRouter();
   const [groupedPowerups, setGroupedPowerups] = useState([]);
   const [user, setUser] = useState(null);
+  const [fontsLoaded] = useFonts({
+    "CustomFont-Bold": require("@/assets/fonts/SF-Pro-Rounded-Bold.otf"),
+    "CustomFont-Regular": require("@/assets/fonts/SF-Pro-Rounded-Regular.otf"),
+    "CustomFont-Semibold": require("@/assets/fonts/SF-Pro-Rounded-Semibold.otf"),
+    "CustomFont-Heavy": require("@/assets/fonts/SF-Pro-Rounded-Heavy.otf"),
+    "CustomFont-Medium": require("@/assets/fonts/SF-Pro-Rounded-Medium.otf"),
+  });
+
+  if (!fontsLoaded) {
+    return (
+      <SafeAreaView className="flex-1 bg-[#0A0E1F] items-center justify-center">
+        <ActivityIndicator size="large" color="#FFFFFF" />
+      </SafeAreaView>
+    );
+  }
 
   // Fetch and group user power-ups on component mount
   useEffect(() => {
@@ -93,7 +110,7 @@ const Inventory = () => {
       )}
 
       {/* Power-up Count */}
-      <Text style={styles.powerupCount}>{item.count}</Text>
+      <Text style={[styles.powerupCount, { fontFamily: "CustomFont-Bold" }]}>{item.count}</Text>
     </TouchableOpacity>
   );
 
@@ -141,7 +158,7 @@ const Inventory = () => {
           style={{
             color: "white",
             fontSize: width * 0.06,
-            fontWeight: "bold",
+            fontFamily: "CustomFont-Bold",
           }}
         >
           Inventory
@@ -195,8 +212,9 @@ const styles = StyleSheet.create({
     bottom: 5, // Adjusted for smaller card
     right: 9, // Adjusted for smaller card
     color: "#FFFFFF",
-    fontSize: width * 0.038, // Slightly smaller font size
-    fontWeight: "bold",
+    fontSize: width * 0.038,
+    marginBottom: height * -0.01,// Slightly smaller font size
+
   },
 });
 

@@ -97,7 +97,7 @@ const profile = () => {
             style={{
               width: width * 0.35,
               height: width * 0.35,
-              marginBottom: height * 0.02,
+              marginBottom: height * 0.0,
             }}
           >
             {customProfilePictureUrl || profilePictureUrl ? (
@@ -108,10 +108,24 @@ const profile = () => {
               />
             ) : null}
           </View>
-          <Text className="text-white font-bold" style={{ fontSize: width * 0.08, marginBottom: height * 0.005 }}>
+          <Text
+            className="text-white"
+            style={{
+              fontFamily: "CustomFont-Bold",
+              fontSize: width * 0.08,
+              marginBottom: height * -0.02,
+            }}
+          >
             {loading ? "Loading..." : fullName}
           </Text>
-          <Text className="text-gray-400" style={{ fontSize: width * 0.045, marginBottom: height * 0.02 }}>
+          <Text
+            className="text-gray-400"
+            style={{
+              fontFamily: "CustomFont-Semibold",
+              fontSize: width * 0.045,
+              marginBottom: height * 0.0,
+            }}
+          >
             @{loading ? "loading..." : username || "unknown"}
           </Text>
           <LinearGradient
@@ -129,7 +143,13 @@ const profile = () => {
               className="rounded-3xl"
               onPress={() => router.push('../other_screens/edit_profile')}
             >
-              <Text className="text-white font-medium" style={{ fontSize: width * 0.045 }}>
+              <Text
+                className="text-white"
+                style={{
+                  fontFamily: "CustomFont-Semibold",
+                  fontSize: width * 0.045,
+                }}
+              >
                 Edit Profile
               </Text>
             </TouchableOpacity>
@@ -150,13 +170,29 @@ const profile = () => {
           }}
         >
           <View className="items-center">
-            <Text className="text-white font-bold" style={{ fontSize: width * 0.07, marginBottom: height * 0.01 }}>
+            <Text
+              className="text-white"
+              style={{
+                fontFamily: "CustomFont-Bold",
+                fontSize: width * 0.07,
+                marginBottom: height * 0.0,
+                marginTop: height * -0.02,
+              }}
+            >
               Level {loading ? "..." : level}
             </Text>
             <View className="bg-[#2A2A3C] rounded-full overflow-hidden" style={{ width: "100%", height: height * 0.02 }}>
               <View className="bg-[#5D16A4] h-full" style={{ width: "50%" }} />
             </View>
-            <Text className="text-gray-400" style={{ fontSize: width * 0.045, marginTop: height * 0.005 }}>
+            <Text
+              className="text-gray-400"
+              style={{
+                fontFamily: "CustomFont-Medium",
+                fontSize: width * 0.045,
+                marginTop: height * 0.005,
+                marginBottom: height * -0.01,
+              }}
+            >
               200 / 400 XP
             </Text>
           </View>
@@ -171,10 +207,10 @@ const profile = () => {
           }}
         >
           <LinearGradient
-            colors={["#13172D", "#0C1022"]}
+            colors={["#13172D", "#0C1024"]}
             locations={[0.0, 0.7]}
-            start={{ x: 1, y: 0 }}
-            end={{ x: 1, y: 1 }}
+            start={{ x: 0, y: 0.3 }}
+            end={{ x: 0.8, y: 1 }}
             style={{
               width: width * 0.43,
               height: height * 0.14,
@@ -187,16 +223,23 @@ const profile = () => {
               onPress={() => router.push("../other_screens/inventory")}
             >
               <InventoryIcon width={width * 0.12} height={width * 0.12} />
-              <Text className="text-white font-medium" style={{ fontSize: width * 0.045, marginTop: height * 0.01 }}>
+              <Text
+                className="text-white"
+                style={{
+                  fontFamily: "CustomFont-Semibold",
+                  fontSize: width * 0.045,
+                  marginTop: height * 0.01,
+                }}
+              >
                 Inventory
               </Text>
             </TouchableOpacity>
           </LinearGradient>
           <LinearGradient
-            colors={["#13172D", "#0C1022"]}
+            colors={["#13172D", "#0C1024"]}
             locations={[0.0, 0.7]}
-            start={{ x: 1, y: 0 }}
-            end={{ x: 1, y: 1 }}
+            start={{ x: 0, y: 0.3 }}
+            end={{ x: 0.8, y: 1 }}
             style={{
               width: width * 0.43,
               height: height * 0.14,
@@ -208,7 +251,14 @@ const profile = () => {
               onPress={() => router.push("../other_screens/store")}
             >
               <StoreIcon width={width * 0.12} height={width * 0.12} />
-              <Text className="text-white font-medium" style={{ fontSize: width * 0.045, marginTop: height * 0.01 }}>
+              <Text
+                className="text-white"
+                style={{
+                  fontFamily: "CustomFont-Semibold",
+                  fontSize: width * 0.045,
+                  marginTop: height * 0.01,
+                }}
+              >
                 Store
               </Text>
             </TouchableOpacity>
@@ -223,10 +273,10 @@ const profile = () => {
           }}
         >
           <LinearGradient
-            colors={["#13172D", "#0C1022"]}
+            colors={["#13172D", "#0C1024"]}
             locations={[0.0, 0.7]}
-            start={{ x: 1, y: 0 }}
-            end={{ x: 1, y: 1 }}
+            start={{ x: 0, y: 0.3 }}
+            end={{ x: 0.8, y: 1 }}
             style={{
               width: width * 0.43,
               height: height * 0.14,
@@ -236,16 +286,23 @@ const profile = () => {
           >
             <TouchableOpacity className="items-center justify-center flex-1">
               <StatisticsIcon width={width * 0.15} height={width * 0.15} />
-              <Text className="text-white font-medium" style={{ fontSize: width * 0.045, marginTop: height * 0.01 }}>
+              <Text
+                className="text-white"
+                style={{
+                  fontFamily: "CustomFont-Semibold",
+                  fontSize: width * 0.045,
+                  marginTop: height * 0.01,
+                }}
+              >
                 Statistics
               </Text>
             </TouchableOpacity>
           </LinearGradient>
           <LinearGradient
-            colors={["#13172D", "#0C1022"]}
+            colors={["#13172D", "#0C1024"]}
             locations={[0.0, 0.7]}
-            start={{ x: 1, y: 0 }}
-            end={{ x: 1, y: 1 }}
+            start={{ x: 0, y: 0.3 }}
+            end={{ x: 0.8, y: 1 }}
             style={{
               width: width * 0.43,
               height: height * 0.14,
@@ -254,7 +311,14 @@ const profile = () => {
           >
             <TouchableOpacity className="items-center justify-center flex-1">
               <AchievementsIcon width={width * 0.15} height={width * 0.15} />
-              <Text className="text-white font-medium" style={{ fontSize: width * 0.045, marginTop: height * 0.01 }}>
+              <Text
+                className="text-white"
+                style={{
+                  fontFamily: "CustomFont-Semibold",
+                  fontSize: width * 0.045,
+                  marginTop: height * 0.01,
+                }}
+              >
                 Achievements
               </Text>
             </TouchableOpacity>

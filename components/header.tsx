@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, Dimensions, SafeAreaView, ActivityIndicator } from "react-native";
+import { View, Text, Image, Dimensions, SafeAreaView, ActivityIndicator, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { supabase } from "@/lib/supabase";
 import { FontAwesome5 } from "@expo/vector-icons";
 import LevelXp, {getLevel} from "@/components/levelsConfig"; // Assuming you have a function to get level from XP
 import DiamondsIcon from "@/assets/icons/diamonds.svg";
 import StreakIcon from "@/assets/icons/streak.svg";
+import NotificationsIcon from "@/assets/icons/notifications.svg"; // Import the Notifications icon
 
 const screenHeight = Dimensions.get("window").height;
 
@@ -87,8 +88,8 @@ const Header = () => {
         style={{
           height: screenHeight * 0.138,
           marginBottom: screenHeight * 0.03,
-          borderBottomLeftRadius: 20,
-          borderBottomRightRadius: 20,
+          borderBottomLeftRadius: 30,
+          borderBottomRightRadius: 30,
           paddingHorizontal: 16,
           flexDirection: "row",
           justifyContent: "space-between",
@@ -107,8 +108,8 @@ const Header = () => {
 
           {/* Level */}
           <View style={{ marginLeft: 12 }}>
-            <Text style={{ color: "white", fontWeight: "bold", fontSize: 18 }}>Lv.{level}</Text>
-            <View style={{ width: 90, height: 9, backgroundColor: "#2A2A3C", borderRadius: 5, marginTop: 4, overflow: "hidden" }}>
+            <Text style={{ color: "white", fontFamily: "CustomFont-Semibold", fontSize: 18,  }}>Lv.{level}</Text>
+            <View style={{ width: 90, height: 9, backgroundColor: "#2A2A3C", borderRadius: 5, marginTop: 0, overflow: "hidden" }}>
               <LinearGradient
                 colors={["#3D5AFE", "#253698"]}
                 start={{ x: 1, y: 0.3 }}
@@ -120,16 +121,28 @@ const Header = () => {
         </View>
 
         {/* Currency Display */}
-        <View 
-        style={{marginRight: 70,}}>
-          <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 4 }}>
-            <StreakIcon width={18} height={18} />
-            <Text style={{ color: "white", fontSize: 18, fontWeight: "bold", marginLeft: 8 }}>{streak}</Text>
+        <View style={{ flexDirection: "row", alignItems: "center", marginRight: 16 }}>
+          <View style={{ marginRight: 40 }}>
+            <View style={{ flexDirection: "row", alignItems: "center", marginBottom: -5 }}>
+              <StreakIcon width={18} height={18} />
+              <Text style={{ color: "white", fontFamily: "CustomFont-Semibold", fontSize: 18, marginLeft: 8 }}>{streak}</Text>
+            </View>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <DiamondsIcon width={25} height={25} />
+              <Text style={{ color: "white", fontFamily: "CustomFont-Semibold", fontSize: 16, marginLeft: 6, marginBottom: 6 }}>{gems}</Text>
+            </View>
           </View>
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <DiamondsIcon width={25} height={25} />
-            <Text style={{ color: "white", fontSize: 16, fontWeight: "bold", marginLeft: 6, marginBottom: 6 }}>{gems}</Text>
-          </View>
+
+          {/* Notification Icon */}
+          <TouchableOpacity>
+            <NotificationsIcon
+              width={30}
+              height={30}
+              style={{
+                alignSelf: "center",
+              }}
+            />
+          </TouchableOpacity>
         </View>
       </LinearGradient>
     </SafeAreaView>

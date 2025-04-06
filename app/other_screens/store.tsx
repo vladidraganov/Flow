@@ -11,6 +11,7 @@ import {
   Image,
   Modal,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import { SvgUri } from "react-native-svg";
 import { supabase } from "@/lib/supabase";
@@ -18,6 +19,7 @@ import { fetchPowerups } from "@/api/powerups"; // Adjust the path as needed
 import { useRouter } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import DiamondsIcon from "@/assets/icons/diamonds.svg"; // Import the gem icon
+import { useFonts } from "expo-font"; // Import useFonts
 
 const { width, height } = Dimensions.get("window");
 
@@ -29,6 +31,22 @@ const Store = () => {
   const [modalVisible, setModalVisible] = useState(false); // Track modal visibility
   const [purchaseModalVisible, setPurchaseModalVisible] = useState(false); // Track purchase modal visibility
   const [effectModalVisible, setEffectModalVisible] = useState(false); // Track effect modal visibility
+
+  const [fontsLoaded] = useFonts({
+    "CustomFont-Bold": require("@/assets/fonts/SF-Pro-Rounded-Bold.otf"),
+    "CustomFont-Regular": require("@/assets/fonts/SF-Pro-Rounded-Regular.otf"),
+    "CustomFont-Semibold": require("@/assets/fonts/SF-Pro-Rounded-Semibold.otf"),
+    "CustomFont-Heavy": require("@/assets/fonts/SF-Pro-Rounded-Heavy.otf"),
+    "CustomFont-Medium": require("@/assets/fonts/SF-Pro-Rounded-Medium.otf"),
+  });
+
+  if (!fontsLoaded) {
+    return (
+      <SafeAreaView className="flex-1 bg-[#0A0E1F] items-center justify-center">
+        <ActivityIndicator size="large" color="#FFFFFF" />
+      </SafeAreaView>
+    );
+  }
 
   useEffect(() => {
     const getPowerups = async () => {
@@ -138,7 +156,10 @@ const Store = () => {
         <TouchableOpacity onPress={() => confirmPurchase(item)} style={{ alignItems: "center" }}>
           {/* Power-up Name */}
           <Text
-            style={styles.powerupName}
+            style={[
+              styles.powerupName,
+              { fontFamily: "CustomFont-Semibold" }, // Apply custom font
+            ]}
             numberOfLines={1} // Limit to one line
             ellipsizeMode="tail" // Add ellipsis if text overflows
           >
@@ -225,8 +246,8 @@ const Store = () => {
             style={{
               color: "white",
               fontSize: width * 0.06,
-              fontWeight: "bold",
-              marginLeft: width * 0.09,
+              fontFamily: "CustomFont-Bold",
+              marginLeft: width * 0.1,
             }}
           >
             Store
@@ -239,7 +260,7 @@ const Store = () => {
               style={{
                 color: "white",
                 fontSize: width * 0.05,
-                fontWeight: "bold",
+                fontFamily: "CustomFont-Bold",
                 marginLeft: 5,
                 marginBottom: 5,
                 marginRight: 10,
@@ -344,7 +365,14 @@ const Store = () => {
         {/* Power-ups List by Category */}
         {categories.map((category) => (
           <View key={category} style={styles.categoryContainer}>
-            <Text style={styles.categoryTitle}>{categoryTitles[category]}</Text>
+            <Text
+              style={[
+                styles.categoryTitle,
+                { fontFamily: "CustomFont-Bold" }, // Apply custom font
+              ]}
+            >
+              {categoryTitles[category]}
+            </Text>
             <FlatList
               data={powerups.filter((powerup) => powerup.category === category)}
               keyExtractor={(item) => item.id.toString()}
@@ -371,7 +399,6 @@ const styles = StyleSheet.create({
   categoryTitle: {
     color: "#FFFFFF",
     fontSize: width * 0.05,
-    fontWeight: "bold",
     marginLeft: width * 0.05,
     marginBottom: height * 0.0,
     marginLeft: width * 0.05, // Reduced margin for closer spacing
@@ -400,7 +427,6 @@ const styles = StyleSheet.create({
   powerupName: {
     color: "#FFFFFF",
     fontSize: width * 0.045,
-    fontWeight: "bold",
     textAlign: "center",
     marginBottom: height * 0.01, // Adjusted for spacing
   },
@@ -412,17 +438,17 @@ const styles = StyleSheet.create({
     bottom: -height * 0.025, // Half under the card
     alignSelf: "center", // Center horizontally
     backgroundColor: "#0A0E1F",
-    borderRadius: 20,
+    borderRadius: 17,
     borderWidth: 3, // Add border
     borderColor: "#151C32", // Border color
     paddingHorizontal: width * 0.013,
-    paddingVertical: height * 0.005,
+    paddingVertical: height * 0.002,
   },
   powerupCost: {
     color: "#FFFFFF",
     fontSize: width * 0.04,
-    fontWeight: "bold",
-    marginLeft: width * 0.005, // Reduced margin for less space
+    marginLeft: width * 0.005,
+    fontFamily: "CustomFont-Bold" // Reduced margin for less space
   },
   modalOverlay: {
     flex: 1,
@@ -442,7 +468,6 @@ const styles = StyleSheet.create({
   modalTitle: {
     color: "#FFFFFF",
     fontSize: width * 0.05,
-    fontWeight: "bold",
     marginBottom: 10,
     textAlign: "center",
   },

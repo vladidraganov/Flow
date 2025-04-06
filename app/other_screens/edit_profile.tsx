@@ -9,12 +9,14 @@ import {
   ScrollView,
   Modal,
   StyleSheet,
+  ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { supabase } from "@/lib/supabase";
 import Button from "@/components/button";
 import { useRouter } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
+import { useFonts } from "expo-font";
 
 const { width, height } = Dimensions.get("window");
 
@@ -26,6 +28,22 @@ const EditProfileScreen = () => {
   const [loading, setLoading] = useState(false);
   const [successModalVisible, setSuccessModalVisible] = useState(false);
   const router = useRouter();
+
+  const [fontsLoaded] = useFonts({
+    "CustomFont-Bold": require("@/assets/fonts/SF-Pro-Rounded-Bold.otf"),
+    "CustomFont-Regular": require("@/assets/fonts/SF-Pro-Rounded-Regular.otf"),
+    "CustomFont-Semibold": require("@/assets/fonts/SF-Pro-Rounded-Semibold.otf"),
+    "CustomFont-Heavy": require("@/assets/fonts/SF-Pro-Rounded-Heavy.otf"),
+    "CustomFont-Medium": require("@/assets/fonts/SF-Pro-Rounded-Medium.otf"),
+  });
+
+  if (!fontsLoaded) {
+    return (
+      <SafeAreaView className="flex-1 bg-[#0A0E1F] items-center justify-center">
+        <ActivityIndicator size="large" color="#FFFFFF" />
+      </SafeAreaView>
+    );
+  }
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -209,7 +227,9 @@ const EditProfileScreen = () => {
             className="text-[#5C5E67]"
             style={{
               fontSize: width * 0.045,
-              marginBottom: height * 0.005,
+              marginBottom: height * 0.00,
+              marginLeft: width * 0.01,
+              fontFamily: "CustomFont-Semibold",
             }}
           >
             Username
@@ -235,7 +255,9 @@ const EditProfileScreen = () => {
             className="text-[#5C5E67]"
             style={{
               fontSize: width * 0.045,
-              marginBottom: height * 0.005,
+              marginBottom: height * 0.00,
+              marginLeft: width * 0.01,
+              fontFamily: "CustomFont-Semibold",
             }}
           >
             Full Name
@@ -302,6 +324,7 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: width * 0.05,
     fontWeight: "bold",
+    fontFamily: "CustomFont-Medium",
   },
   okButton: {
     marginTop: 20,
