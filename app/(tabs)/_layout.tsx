@@ -24,7 +24,7 @@ export default function TabsLayout() {
       <Tabs
         screenOptions={{
           tabBarStyle: {
-            backgroundColor: "#0D1224", // Dark background
+            backgroundColor: "#0C1023", // Dark background
             borderTopWidth: 0, // Remove top border
             height: "10%", // Responsive height
             paddingBottom: "2%", // Responsive padding

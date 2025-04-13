@@ -81,7 +81,7 @@ const Header = () => {
   return (
     <SafeAreaView>
       <LinearGradient
-        colors={["#13172D", "#0C1022"]} 
+        colors={["#13172D", "#0C1024"]} 
         locations={[0.0, 0.7]} 
         start={{ x: 1, y: 0 }} 
         end={{ x: 1, y: 1 }} 
