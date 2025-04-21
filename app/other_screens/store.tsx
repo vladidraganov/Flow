@@ -64,10 +64,16 @@ const Store = () => {
         }
 
         const userId = currentUser.user.id;
+        if (!userId) {
+          console.error("User ID is undefined");
+          return;
+        }
+
+        console.log("Fetched User ID:", userId); // Debugging log
 
         const { data, error } = await supabase
           .from("profiles")
-          .select("id, gems")
+          .select("user_id, gems")
           .eq("user_id", userId)
           .single();
 
@@ -103,7 +109,7 @@ const Store = () => {
     const { error: updateError } = await supabase
       .from("profiles")
       .update({ gems: user.gems - powerup.cost })
-      .eq("id", user.id);
+      .eq("user_id", user.user_id);
 
     if (updateError) {
       alert("Failed to deduct gems.");
@@ -111,19 +117,47 @@ const Store = () => {
       return;
     }
 
-    const { error: insertError } = await supabase
+    const { data: existingPowerup, error: selectError } = await supabase
       .from("user_powerups")
-      .insert({
-        user_id: user.id,
-        powerup_id: powerup.id,
-        activated_at: null,
-        expires_at: null,
-      });
+      .select("count")
+      .eq("user_id", user.user_id) // Ensure user_id is used correctly
+      .eq("powerup_id", powerup.id)
+      .single();
 
-    if (insertError) {
-      alert("Failed to add power-up to inventory.");
-      console.error(insertError);
+    if (selectError && selectError.code !== "PGRST116") {
+      alert("Failed to check existing power-up.");
+      console.error(selectError);
       return;
+    }
+
+    if (existingPowerup) {
+      const { error: updateCountError } = await supabase
+        .from("user_powerups")
+        .update({ count: existingPowerup.count + 1 })
+        .eq("user_id", user.user_id) // Ensure user_id is used correctly
+        .eq("powerup_id", powerup.id);
+
+      if (updateCountError) {
+        alert("Failed to update power-up count.");
+        console.error(updateCountError);
+        return;
+      }
+    } else {
+      const { error: insertError } = await supabase
+        .from("user_powerups")
+        .insert({
+          user_id: user.user_id, // Ensure user_id is used correctly
+          powerup_id: powerup.id,
+          count: 1,
+          activated_at: null,
+          expires_at: null,
+        });
+
+      if (insertError) {
+        alert("Failed to add power-up to inventory.");
+        console.error(insertError);
+        return;
+      }
     }
 
     setUser((prevUser) => ({ ...prevUser, gems: prevUser.gems - powerup.cost }));

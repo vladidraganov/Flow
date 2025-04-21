@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Image,
   ActivityIndicator,
+  Modal,
 } from "react-native";
 import { SvgUri } from "react-native-svg";
 import { supabase } from "@/lib/supabase";
@@ -22,6 +23,8 @@ const Inventory = () => {
   const router = useRouter();
   const [groupedPowerups, setGroupedPowerups] = useState([]);
   const [user, setUser] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedPowerUp, setSelectedPowerUp] = useState(null);
   const [fontsLoaded] = useFonts({
     "CustomFont-Bold": require("@/assets/fonts/SF-Pro-Rounded-Bold.otf"),
     "CustomFont-Regular": require("@/assets/fonts/SF-Pro-Rounded-Regular.otf"),
@@ -40,63 +43,79 @@ const Inventory = () => {
 
   // Fetch and group user power-ups on component mount
   useEffect(() => {
-    const fetchUserPowerups = async () => {
-      try {
-        const { data: currentUser, error: authError } = await supabase.auth.getUser();
-
-        if (authError || !currentUser?.user) {
-          console.error("No user is logged in or failed to fetch user:", authError);
-          return;
-        }
-
-        const userId = currentUser.user.id;
-
-        const { data: userData, error: userError } = await supabase
-          .from("profiles")
-          .select("id")
-          .eq("user_id", userId)
-          .single();
-
-        if (userError) {
-          console.error("Error fetching user data:", userError);
-          return;
-        }
-
-        setUser(userData);
-
-        const { data: powerups, error: powerupsError } = await supabase
-          .from("user_powerups")
-          .select("powerup_id, activated_at, expires_at, powerups(name, effect, icon_url)")
-          .eq("user_id", userData.id);
-
-        if (powerupsError) {
-          console.error("Error fetching user power-ups:", powerupsError);
-          return;
-        }
-
-        // Group power-ups by powerup_id
-        const grouped = powerups.reduce((acc, item) => {
-          const existing = acc.find((p) => p.powerup_id === item.powerup_id);
-          if (existing) {
-            existing.count += 1;
-          } else {
-            acc.push({ ...item, count: 1 });
-          }
-          return acc;
-        }, []);
-
-        setGroupedPowerups(grouped);
-      } catch (error) {
-        console.error("Unexpected error fetching user power-ups:", error);
-      }
-    };
-
     fetchUserPowerups();
   }, []);
 
+  const fetchUserPowerups = async () => {
+    try {
+      const { data: currentUser, error: authError } = await supabase.auth.getUser();
+
+      if (authError || !currentUser?.user) {
+        console.error("No user is logged in or failed to fetch user:", authError);
+        return;
+      }
+
+      const userId = currentUser.user.id;
+
+      const { data: powerups, error: powerupsError } = await supabase
+        .from("user_powerups")
+        .select("powerup_id, count, powerups(name, effect, icon_url)")
+        .eq("user_id", userId);
+
+      if (powerupsError) {
+        console.error("Error fetching user power-ups:", powerupsError);
+        return;
+      }
+
+      setGroupedPowerups(powerups);
+    } catch (error) {
+      console.error("Unexpected error fetching user power-ups:", error);
+    }
+  };
+
+  const confirmActivatePowerUp = (powerUp) => {
+    setSelectedPowerUp(powerUp);
+    setModalVisible(true);
+  };
+
+  const activatePowerUp = async () => {
+    if (!selectedPowerUp) return;
+
+    try {
+      const { data: currentUser, error: authError } = await supabase.auth.getUser();
+
+      if (authError || !currentUser?.user) {
+        console.error("No user is logged in or failed to fetch user:", authError);
+        return;
+      }
+
+      const userId = currentUser.user.id;
+
+      const { error } = await supabase.rpc("apply_powerup", {
+        p_user_id: userId,
+        p_powerup_id: selectedPowerUp.powerup_id,
+      });
+
+      if (error) {
+        console.error("Error activating power-up:", error);
+        alert("Failed to activate power-up.");
+        return;
+      }
+
+      alert("Power-up activated successfully!");
+      setModalVisible(false);
+      fetchUserPowerups();
+    } catch (error) {
+      console.error("Unexpected error activating power-up:", error);
+    }
+  };
+
   // Render each grouped power-up item
   const renderPowerup = ({ item }) => (
-    <TouchableOpacity style={styles.powerupCard}>
+    <TouchableOpacity
+      style={styles.powerupCard}
+      onPress={() => confirmActivatePowerUp(item)}
+    >
       {/* Power-up Icon */}
       {item.powerups.icon_url && item.powerups.icon_url.endsWith(".svg") ? (
         <SvgUri
@@ -174,6 +193,33 @@ const Inventory = () => {
         numColumns={3} // Display 3 cards in a row
         contentContainerStyle={styles.listContainer}
       />
+
+      <Modal
+        visible={modalVisible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>Activate {selectedPowerUp?.powerups.name}?</Text>
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.cancelButton]}
+                onPress={() => setModalVisible(false)}
+              >
+                <Text style={styles.buttonText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.confirmButton]}
+                onPress={activatePowerUp}
+              >
+                <Text style={styles.buttonText}>Activate</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };
@@ -213,8 +259,50 @@ const styles = StyleSheet.create({
     right: 9, // Adjusted for smaller card
     color: "#FFFFFF",
     fontSize: width * 0.038,
-    marginBottom: height * -0.01,// Slightly smaller font size
-
+    marginBottom: height * -0.01, // Slightly smaller font size
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContainer: {
+    width: width * 0.8,
+    backgroundColor: "#1E2236",
+    borderRadius: 20,
+    padding: 20,
+    alignItems: "center",
+  },
+  modalTitle: {
+    color: "#FFFFFF",
+    fontSize: width * 0.05,
+    fontFamily: "CustomFont-Bold",
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  modalButtons: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+  },
+  modalButton: {
+    flex: 1,
+    padding: 10,
+    borderRadius: 10,
+    alignItems: "center",
+    marginHorizontal: 5,
+  },
+  cancelButton: {
+    backgroundColor: "#6c757d",
+  },
+  confirmButton: {
+    backgroundColor: "#28a745",
+  },
+  buttonText: {
+    color: "#FFFFFF",
+    fontSize: width * 0.04,
+    fontFamily: "CustomFont-Bold",
   },
 });
 
